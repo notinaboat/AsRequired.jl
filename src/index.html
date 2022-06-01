@@ -1,0 +1,26 @@
+<html>
+<body>
+
+<script>
+    var sub_window
+    window.addEventListener("message", (event) => {
+        frames['iframe_2'].contentWindow.postMessage(event.data, '*');
+        frames['iframe_3'].contentWindow.postMessage(event.data, '*');
+        window.sub_window.postMessage(event.data, '*');
+    }, false);
+    function go() {
+        sub_window = window.open("page3.html", "sub_window",  "height=400,width=800");
+    };
+</script>
+
+<p><a onclick="go();">open window</a></p>
+
+<iframe src="page1.html" id="iframe_1" width="30%" height="100%" style="border:1px solid black;">
+</iframe>
+<iframe src="page2.html" id="iframe_2" width="30%" height="100%" style="border:1px solid black;">
+</iframe>
+<iframe src="page3.html" id="iframe_3" width="30%" height="100%" style="border:1px solid black;">
+</iframe>
+    
+</body>
+</html>

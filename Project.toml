@@ -1,0 +1,10 @@
+name = "AsRequired"
+uuid = "faeece6c-a602-4ba9-8642-7346bdef847c"
+authors = ["notinaboat <notinaboat@icloud.com>"]
+version = "0.1.0"
+
+[deps]
+DataStructures = "864edb3b-99cc-5e75-8d2d-829cb0a9cfe8"
+LazyJSON = "fc18253b-5e1b-504c-a4a2-9ece4944c004"
+Markdown = "d6f4376e-aef5-505a-96c1-9c027394607a"
+ReadmeDocs = "c63066b3-de92-487d-9da7-7c375a07912b"

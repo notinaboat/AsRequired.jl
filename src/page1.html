@@ -1,0 +1,15 @@
+<html>
+<script>
+    function go(x) {
+        window.parent.postMessage(x, '*');
+    }
+</script>
+<body>
+    <h1>Page 1</h1>
+    <p>foo</p>
+    <p>bar</p>
+    <p><a href="page2.html#p2foo" target="iframe_2">the link</a></p>
+    <p><a onclick="go('p2foo');">the link again</a></p>
+    <p><a onclick="go('p2bar');">the other link</a></p>
+</body>
+</html>
