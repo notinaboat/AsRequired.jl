@@ -321,7 +321,15 @@ function coverage_table(definitions, relationships, rules)
                             end
                         end
                         md = "<a name=\"$x\"></a>"
-                        if x ∈ keys(definitions) && c ∈ ["H", "R", "D", "T"]
+                        if x ∈ keys(definitions) && c ∈ ["T"]
+                            file, line, txt = definitions[x]
+                            if startswith(x, "$c:")
+                                t, f, n = split(x, ":")
+                                x = "$(basename(f)):$n"
+                            end
+                            x = "[$x]($file#$x)"
+                        end
+                        if x ∈ keys(definitions) && c ∈ ["H", "R", "D"]
                             file, line, txt = definitions[x]
                             x = "[$x: $txt]($file#$x)"
                         end
