@@ -151,8 +151,9 @@ global requirement_rules =
 OrderedDict(
     "H" => ["R"],
     "R" => ["T"],
-    "T" => ["TR"],
-    "TR" => [],
+    "T" => [],
+#    "T" => ["TR"],
+#    "TR" => [],
 )
 
 global design_rules = 
@@ -160,10 +161,12 @@ OrderedDict(
     "R" => ["D"],
     "D" => ["I", "U", "T"],
     "I" => [],
-    "U" => ["UR"],
-    "UR" => [],
-    "T" => ["TR"],
-    "TR" => []
+    "U" => [],
+#    "U" => ["UR"],
+#    "UR" => [],
+    "T" => []
+#    "T" => ["TR"],
+#    "TR" => []
 )
 
 
@@ -320,26 +323,30 @@ function coverage_table(definitions, relationships, rules)
                                 break
                             end
                         end
-                        md = "<a name=\"$x\"></a>"
-                        if x ∈ keys(definitions) && c ∈ ["T"]
-                            file, line, txt = definitions[x]
-                            if startswith(x, "$c:")
-                                t, f, n = split(x, ":")
-                                x = "$(basename(f)):$n"
+                        if x == ""
+                            push!(out_row, "")
+                        else
+                            md = "<a name=\"$x\"></a>"
+                            if x ∈ keys(definitions) && c ∈ ["T"]
+                                file, line, txt = definitions[x]
+                                if startswith(x, "$c:")
+                                    t, f, n = split(x, ":")
+                                    x = "$(basename(f)):$n"
+                                end
+                                x = "[$x]($file#$x)"
                             end
-                            x = "[$x]($file#$x)"
+                            if x ∈ keys(definitions) && c ∈ ["H", "R", "D"]
+                                file, line, txt = definitions[x]
+                                x = "[$x: $txt]($file#$x)"
+                            end
+                            if x ∈ keys(definitions) && c ∈ ["I"]
+                                t, f, n = split(x, ":")
+                                file, line, txt = definitions[x]
+                                x = "[$(basename(f)):$n $txt]($file#cb-$n)"
+                            end
+                            md *= x
+                            push!(out_row, md)
                         end
-                        if x ∈ keys(definitions) && c ∈ ["H", "R", "D"]
-                            file, line, txt = definitions[x]
-                            x = "[$x: $txt]($file#$x)"
-                        end
-                        if x ∈ keys(definitions) && c ∈ ["I"]
-                            t, f, n = split(x, ":")
-                            file, line, txt = definitions[x]
-                            x = "[$(basename(f)):$n $txt]($file#cb-$n)"
-                        end
-                        md *= x
-                        push!(out_row, md)
                     end
                     push!(rows, out_row)
                     push!(done, r...)
@@ -349,8 +356,18 @@ function coverage_table(definitions, relationships, rules)
         end
     end
 
+    for (i, r) in Iterators.reverse(enumerate(rows))
+        i > 1 || continue
+        for (j, c) in enumerate(r)
+            if !isempty(c) && !contains(c, "⚠️") && rows[i-1][j] == c
+                r[j] = "↑"
+            end
+        end
+    end
+
     return [header, rows...]
 end
+
 
 function md_coverage_table(definitions, relationships, rules)
     data = coverage_table(definitions, relationships, rules)
