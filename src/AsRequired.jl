@@ -243,7 +243,11 @@ function scan_file(f)
                         definitions[l] = (i, remove_tags(line))
                     end
                 elseif op == "=>"
-                    push!(relationships, l => r)
+                    if (l => r) ∈ relationships
+                        @warn "Duplicate $f:$i:$l => $r"
+                    else
+                        push!(relationships, l => r)
+                    end
                 end
             end
             old_l = l
@@ -397,6 +401,15 @@ function md_coverage_table()
         """)
 end
 
+
+function coverage_map()
+    d, r = scan_files(ARGS...)
+
+    for (k, v) in r
+        println("$k => $v")
+    end
+    nothing
+end
 
 
 #=
