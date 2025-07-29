@@ -169,6 +169,12 @@ OrderedDict(
 #    "TR" => []
 )
 
+global hardware_spec_rules = 
+OrderedDict(
+    "D" => ["T"],
+    "T" => []
+)
+
 
 README"""
     extract_tags(string)
@@ -389,6 +395,15 @@ function md_coverage_table()
     println(md"""
         # Requirements Trace Report
 
+        Unused ID numbers:
+
+        """)
+
+    id_gaps()
+    println()
+
+    println(md"""
+
         ## Requirements Tracing Rules
 
         $rt
@@ -402,6 +417,32 @@ function md_coverage_table()
 end
 
 
+function md_coverage_hardware_spec_table()
+
+    d, r = scan_files(ARGS...)
+
+    t = md_coverage_table(d, r, hardware_spec_rules)
+
+    println(md"""
+        # Design Specification Trace Report
+
+        Unused ID numbers:
+
+        """)
+
+    id_gaps(["D", "T"])
+    println()
+
+    println(md"""
+
+        ## Design Tracing Rules
+        
+        $t
+        
+        """)
+end
+
+
 function coverage_map()
     d, r = scan_files(ARGS...)
 
@@ -409,6 +450,26 @@ function coverage_map()
         println("$k => $v")
     end
     nothing
+end
+
+function id_gaps(types = ["H", "R", "D"])
+    d, r = scan_files(ARGS...)
+    for t in types
+        print(" - $t: ")
+        v = [parse(Int, x[2:end]) for x in filter(startswith(t), keys(d))] |> sort
+        old_x = 0
+        for x in v
+            if x > old_x + 1
+                print(old_x + 1)
+                if x > old_x + 2
+                    print("...$(x - 1)")
+                end
+                print(", ")
+            end
+            old_x = x
+        end
+        println("$(old_x+1)...")
+    end
 end
 
 
